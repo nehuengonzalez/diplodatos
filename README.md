@@ -1,1 +1,3 @@
-Pablo madoery\nAdel Arja\nNehuen Gonzalez
+Pablo Madoery
+Adel Arja
+Nehuen Gonzalez
