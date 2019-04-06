@@ -1,5 +1,9 @@
-Pablo Madoery
+# Trabajo Práctico N° 1 - Diplomatura en Ciencias de Datos
 
-Adel Arja
+## Integrantes
 
-Nehuen Gonzalez
+- Pablo Madoery
+
+- Adel Arja
+
+- Nehuen Gonzalez
