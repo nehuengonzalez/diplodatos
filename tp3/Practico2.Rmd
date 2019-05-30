@@ -1,5 +1,5 @@
 ---
-title: "Analisis y Curacion clase 4: PrÃ¡ctico 2"
+title: "Analisis y Curacion clase 4: Práctico 2"
 authores: "Gonzalez Nehuen, Arja Adel, Madoery Pablo"
 date: "30 de Mayo, 2019, Cohorte Alpha"
 output:
@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = FALSE)
 ``` 
 
 ***
-## AnÃ¡lisis exploratorio y curaciÃ³n de datos
+## Análisis exploratorio y curación de datos
 
 - Gonzalez Nehuen
 - Arja Adel 
@@ -30,29 +30,61 @@ knitr::opts_chunk$set(echo = FALSE)
 - Comente la influencia de la normalizacion de los datos en los resultados del clustering.
 
 ***
-## Solucin
+## Solución
+
+### Utilizamos el método "k-Nearest Neighbour", con el cual realizamos la clasificación de un data set de distintos tipos de vidrios.
+### El data set fue descargado de https://archive.ics.uci.edu/ml/datasets/glass+identification.
+
+### Cargamos el data set en un data frame
+### Le ponemos los nombres a las columnas de acuerdo a la documentación del data set
 
 ```{r echo=TRUE}
+### Cargamos el data set en un data frame
 glass_df = read.csv("glass.csv", header = FALSE)
-colnames(glass_df) <- c("id", "RI", "Na", "Mg", "Al", "Si", "K", "Ca", "Ba", "Fe", "Type")
-glass_df
+
+### Le ponemos los nombres a las columnas de acuerdo a la documentación del data set
+colnames(glass_df) <- 
+  c("id", "RI", "Na", "Mg", "Al", "Si", "K", "Ca", "Ba", "Fe", "Type")
+```
+
+***
+### transformamos la columna de clasificación a string
+### hacemos un shuffle de las filas del data frame para no incurrir 
+### en errores de inferencias triviales
+```{r echo=TRUE}
+### transformamos la columna de clasificación a string
 glass_df$Type <- as.character(glass_df$Type) 
+### hacemos un shuffle de las filas del data frame para no incurrir 
+### en errores de inferencias triviales
 glass_df <- glass_df[sample(nrow(glass_df)),]
+
+### normalizamos los valores numéricos
 normalize <- function(x) {
 return ((x-min(x))/(max(x)-min(x)))
 }
 glass_df_n <- as.data.frame(lapply(glass_df[2:10], normalize))
-#for (type in 1:7){
-#  condition <-(glass_df[,"Type"]==type)
-#  print(dim(glass_df[condition,]))
-#}
+```
+
+***
+### definimos un conjunto de datos para entrenamiento y otro para tests
+```{r echo=TRUE}
+### definimos un conjunto de datos para entrenamiento y otro para tests
 glass_df_n_train = glass_df_n[1:100,]
 glass_df_n_test = glass_df_n[101:214,]
 train_types = glass_df[1:100, "Type"]
 test_types = glass_df[101:214, "Type"]
+```
+
+***
+### Realizamos "N_reps" repeticiones y calculamos la eficiencia promedio 
+### (que guardamos finalmente en un vector v)
+### El gráfico muestra que no hay gran variación de la eficiencia en la clasificación cuando se varía el parámetro k.
+```{r echo=TRUE}
+### Realizamos "N_reps" repeticiones y calculamos la eficiencia promedio 
+### (que guardamos finalmente en un vector v)
 library(class)
 v = rep(0, 15)
-N_reps = 1000
+N_reps = 10
 for (j in 1:N_reps){
   for (k in 1:15){
     data_test_pred <- knn(train=glass_df_n_train, test=glass_df_n_test, cl=train_types, k=k)
@@ -60,10 +92,15 @@ for (j in 1:N_reps){
   }
 }
 v <- v/N_reps
-plot(1:15, v)
-#library(gmodels)
-#CrossTable(x=test_types, y=data_test_pred, prop.chisq = FALSE)
+plot(1:15, v, ylim=c(0,1))
+### El gráfico muestra que no hay gran variación de la eficiencia en la clasificación cuando se varía el parámetro k.
 ```
+
 ***
+### Calculamos la Crosstable para ver la eficiencia en la clasificación de cada clase y los errores cometidos.
+```{r echo=TRUE}
+### Calculamos la Crosstable para ver la eficiencia en la clasificación de cada clase y los errores cometidos.
+library(gmodels)
+CrossTable(x=test_types, y=data_test_pred, prop.chisq = FALSE)
 ```
 ***
