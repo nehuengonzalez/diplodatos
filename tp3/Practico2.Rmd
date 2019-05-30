@@ -33,43 +33,40 @@ knitr::opts_chunk$set(echo = FALSE)
 ## Solución
 
 ```{r echo=TRUE}
-glass_df = read.csv("glass.csv", header = FALSE)
-colnames(glass_df) <- c("id", "RI", "Na", "Mg", "Al", "Si", "K", "Ca", "Ba", "Fe", "Type")
-glass_df
-glass_df$Type <- as.character(glass_df$Type) 
+glass_df = read.csv("abalone.csv", header = FALSE)
+colnames(glass_df) <- c("Sex", "Length", "Diameter", "Height", "Whole_weigth ", "Shucked_weight", "Viscera_weight", "Shell_weight", "Rings")
+glass_df$Rings <- as.character(glass_df$Rings) 
 glass_df <- glass_df[sample(nrow(glass_df)),]
+glass_df$Sex <- as.numeric(glass_df$Sex) 
 
 normalize <- function(x) {
 return ((x-min(x))/(max(x)-min(x)))
 }
 
-glass_df_n <- as.data.frame(lapply(glass_df[2:10], normalize))
+glass_df_n <- as.data.frame(lapply(glass_df[1:8], normalize))
+glass_df_n
 
-#for (type in 1:7){
-#  condition <-(glass_df[,"Type"]==type)
-#  print(dim(glass_df[condition,]))
-#}
+glass_df_n_train = glass_df_n[1:2000,]
+glass_df_n_test = glass_df_n[2001:4177,]
 
-glass_df_n_train = glass_df_n[1:100,]
-glass_df_n_test = glass_df_n[101:214,]
-
-train_types = glass_df[1:100, "Type"]
-test_types = glass_df[101:214, "Type"]
+train_types = glass_df[1:2000, "Rings"]
+test_types = glass_df[2001:4177, "Rings"]
 
 library(class)
+N_reps = 100
+N_bins = 30
 
-v = rep(0, 15)
+v = rep(0, N_bins)
 
-N_reps = 1000
 for (j in 1:N_reps){
-  for (k in 1:15){
+  for (k in 1:N_bins){
     data_test_pred <- knn(train=glass_df_n_train, test=glass_df_n_test, cl=train_types, k=k)
     v[k] <- v[k] + sum(data_test_pred == test_types) / length(test_types)
   }
 }
 v <- v/N_reps
 
-plot(1:15, v)
+plot(1:N_bins, v)
 
 #library(gmodels)
 #CrossTable(x=test_types, y=data_test_pred, prop.chisq = FALSE)
