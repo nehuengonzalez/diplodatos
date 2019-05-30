@@ -1,0 +1,83 @@
+---
+title: "Analisis y Curacion clase 3: Práctico 1"
+authores: "Gonzalez Nehuen, Arja Adel, Madoery Pablo"
+date: "30 de Mayo, 2019, Cohorte Alpha"
+output:
+  beamer_presentation: default
+  ioslides_presentation: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+``` 
+## Análisis exploratorio y curación de datos
+
+- Gonzalez Nehuen
+- Arja Adel 
+- Madoery Pablo
+
+## Practico 1: Entregar un Rmd donde se encuentren todos los vuelos que:
+
+- Que arribaron con un retraso de mas de dos horas.
+- Volaron hacia Houston (IAH o HOU)
+- Fueron operados por United, American o Delta.
+- Salieron en Verano (Julio, Agosto y Septiembre)
+- Arrivaron mas de dos horas tarde, pero salieron bien.
+- Salieron entre medianoche y las 6 am.
+
+***
+## Solución
+
+```{r echo=TRUE}
+library(nycflights13)
+fligths<-nycflights13::flights
+```
+***
+### - Que arribaron con un retraso de mas de dos horas.
+```{r echo=TRUE}
+condition <-(flights[,"arr_delay"]>2*60)
+flights[condition,"flight"]
+```
+***
+### - Volaron hacia Houston (IAH o HOU)
+```{r echo=TRUE}
+condition <-
+  (flights[,"dest"]=="IAH") | 
+  (flights[,"dest"]=="HOU")
+flights[condition,"flight"]
+```
+***
+### - Fueron operados por United, American o Delta.
+```{r echo=TRUE}
+condition <-
+  (flights[,"carrier"]=="UA") | 
+  (flights[,"carrier"]=="AA") | 
+  (flights[,"carrier"]=="DL")
+flights[condition,"flight"]
+```
+***
+### - Salieron en Verano (Julio, Agosto y Septiembre)
+```{r echo=TRUE}
+condition <-
+  (flights[,"month"]>=7) & 
+  (flights[,"month"]<=9)
+flights[condition,"flight"]
+```
+***
+### - Arrivaron mas de dos horas tarde, pero salieron bien.
+```{r echo=TRUE}
+condition <- 
+  (flights[,"arr_delay"]>2*60) & 
+  (flights[,"dep_delay"]<=0)
+flights[condition,"flight"]
+```
+***
+### - Salieron entre medianoche y las 6 am.
+```{r echo=TRUE}
+condition <- 
+  ((flights[,"hour"]>=0) & (flights[,"hour"]<=5)) | 
+  ((flights[,"hour"]==6) & (flights[,"minute"]==0))
+flights[condition,"flight"]
+```
+
+
