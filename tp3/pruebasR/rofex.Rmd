@@ -1,0 +1,188 @@
+---
+title: "dolarFuturoRFX20Oro"
+author: "Adel Arja"
+date: "5/30/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Practico 2 - Clasificaci\'on de D\'olar, \'indice RFX20 y Oro.
+
+Tomamos datos de D\'olar futuro tomado de ROFEX. Tomamos como separador el tab \t
+
+```{r}
+data <- read.csv('activos.xls', sep='\t')
+```
+
+## Including Plots
+
+Transformamos las fechas String en formato Dates
+
+```{r pressure, echo=FALSE}
+data$Fecha <- as.Date(data$Fecha, format="%d/%m/%Y")
+```
+
+Reemplazamos "," por "." y luego convertimos en numero las columnas Ultimo, Primero, Minimo y Maximo.
+
+```{r}
+data$Primero <- as.numeric(gsub(",", ".", data$Primero))
+data$Ultimo <- as.numeric(gsub(",", ".", data$Ultimo))
+data$Minimo <- as.numeric(gsub(",", ".", data$Minimo))
+data$Maximo <- as.numeric(gsub(",", ".", data$Maximo))
+
+data
+```
+
+Filtramos solo 3 grupos de activos: ***DLR052019***, ***RFX20062019*** y ***ORO052019***. De ese modo tenemos en cuenta solo los anteriores.
+
+```{r}
+data$Posicion <- gsub(" ", "", data$Posicion)
+activos <- subset(data, (gsub(" ", "", data$Posicion) == "DLR052019") | (gsub(" ", "", data$Posicion) == "RFX20062019") | (gsub(" ", "", data$Posicion) == "ORO052019"))
+
+activos
+```
+
+A continuaci\'on vemos un gr\'afico de los activos
+
+```{r}
+plot(activos$Fecha, activos$Ultimo, main="Posiciones Activos")
+```
+En el anterior gr\'afico vemos la amplia diferencia de los precios de cotizaci\'on de los activos. El \'indice Rofex 20 se utiliza ponderando las cotizaciones de empresas Argentinas. Luego que tenemos el Oro y D\'olar. Las cotizaciones son en rangos muy diferentes.
+
+```{r}
+posiciones <- activos$Posicion
+dataSinPosicion <- activos[-2]
+```
+
+A continuaci\'on normalizamos la data
+
+```{r}
+library(Hmisc)
+OHLC <- activos[5:8]
+OHLC
+OHLC <- impute(OHLC)
+dataNorm <- as.data.frame(lapply(OHLC, scale))
+plot(dataNorm$Ultimo, dataNorm$Fecha, main="Todas las posiciones")
+activos
+dataNorm
+```
+
+Ahora Seteamos los l\'imites para establecer la training data y la test data. Aplicamos luego KNN.
+
+```{r}
+limiteInf = round(length(dataNorm[,1])/4)
+limiteSup = length(dataNorm[,1])
+
+data_train <- dataNorm[1:limiteInf,]
+data_test <- dataNorm[(limiteInf + 1):limiteSup,]
+
+data_train_labels <- activos$Posicion[1:limiteInf]
+data_test_labels <- activos$Posicion[(limiteInf+1):limiteSup]
+data_train_labels
+
+library(class)
+data_test_pred <- knn(train=data_train, test=data_test, cl=data_train_labels, k=13)
+
+library(gmodels)
+CrossTable(x=data_test_labels, y=data_test_pred, prop.chisq = FALSE)
+```
+
+Como podemos observar, las diferencias de precios permiten una f\'acil clasificaci\'on de los activos.
+
+```{r}
+v <- rep(0:15)
+for (k in 1:31){
+  data_test_pred <- knn(train=data_train, test=data_test, cl=data_train_labels, k=k)
+  v[k] <- sum(data_test_pred == data_test_labels)/length(data_test_labels)
+}
+plot(1:k, v)
+```
+
+La eficiencia es pr\'acticamente la misma en el anterior caso. Los valores de los activos son sumamente diferentes, y eso hace que sea simple determinar de que activo se trata con diferencias euclidianas. 
+
+A continuaci\'on veremos que ocurre con activos como el D\'olar futuro Mayo2019, Agosto2019 y Diciembre2019.
+
+```{r}
+data$Posicion <- gsub(" ", "", data$Posicion)
+data$Posicion
+dolares <- subset(data, (gsub(" ", "", data$Posicion) == "DLR052019") | (gsub(" ", "", data$Posicion) == "DLR082019") | (gsub(" ", "", data$Posicion) == "DLR122019"))
+
+plot(dolares$Fecha, dolares$Ultimo, main="Posiciones Activos")
+dolares$Posicion
+
+
+```
+Como podemos apreciar en el anterior gr\'afico, sobre todo en el rango de meses desde septiembre a enero, los valores de los tres contratos toman valores similares. Veamos que resultados arroja el m\'etodo KNN.
+
+```{r}
+posiciones <- dolares$Posicion
+dataSinPosicion <- dolares[-2]
+
+OHLC <- dolares[5:8]
+OHLC <- impute(OHLC)
+dataNor <- as.data.frame(lapply(OHLC, scale))
+
+limiteInf = length(dataNor[,1])/4
+limiteSup = length(dataNor[,1])
+
+data_train <- dataNor[1:limiteInf,]
+data_test <- dataNor[(limiteInf + 1):limiteSup,]
+
+data_train_labels <- dolares$Posicion[1:limiteInf]
+data_test_labels <- dolares$Posicion[(limiteInf+1):limiteSup]
+
+library(class)
+data_test_pred <- knn(train=data_train, test=data_test, cl=data_train_labels, k=5)
+
+library(gmodels)
+CrossTable(x=data_test_labels, y=data_test_pred, prop.chisq = FALSE)
+```
+
+Como vemos, hay un solapamiento entre las detecciones de DLR052019 y, en DLR122019 no hay una predicci\'on para nada aceptable. Veamos que ocurre si tomamos la data desde Abril. Desde Abril, los precios de los contratos no se solapan, por lo que analizando los valores de los vecinos deber\'iamos poder identificar los contratos de acuerdo al precio.
+
+```{r}
+dolaresDesdeAbril <- subset(dolares, (as.numeric(format(dolares$Fecha, "%m")) > 3) & (as.numeric(format(dolares$Fecha, "%Y")) == 2019))
+
+dolaresDesdeAbril
+
+```
+
+```{r}
+posiciones <- dolaresDesdeAbril$Posicion
+dataSinPosicion <- dolaresDesdeAbril[-2]
+
+OHLC <- dolaresDesdeAbril[5:8]
+OHLC <- impute(OHLC)
+dataNor <- as.data.frame(lapply(OHLC, scale))
+
+limiteInf = length(dataNor[,1])/4
+limiteSup = length(dataNor[,1])
+
+data_train <- dataNor[1:limiteInf,]
+data_test <- dataNor[(limiteInf + 1):limiteSup,]
+
+data_train_labels <- dolaresDesdeAbril$Posicion[1:limiteInf]
+data_test_labels <- dolaresDesdeAbril$Posicion[(limiteInf+1):limiteSup]
+
+library(class)
+data_test_pred <- knn(train=data_train, test=data_test, cl=data_train_labels, k=5)
+
+library(gmodels)
+CrossTable(x=data_test_labels, y=data_test_pred, prop.chisq = FALSE)
+```
+Aqu\'i podemos observar que la detecci\'on ha sido mucho m\'as eficiente. 
+
+```{r}
+v <- rep(1:15)
+for (k in 1:25){
+  data_test_pred <- knn(train=data_train, test=data_test, cl=data_train_labels, k=k)
+  v[k] <- sum(data_test_pred == data_test_labels)/length(data_test_labels)
+}
+
+plot(1:k, v)
+
+```
+En este caso vemos como al variar K la eficiencia disminuye (aumentamos el n\'umero de vecinos a analizar e impacta negativamente en la clasificaci\'on).
