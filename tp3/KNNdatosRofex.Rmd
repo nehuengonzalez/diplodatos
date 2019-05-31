@@ -1,6 +1,6 @@
 ---
 title: "dolarFuturoRFX20Oro"
-author: "Adel Arja"
+author: "Grupo Diplo"
 date: "5/30/2019"
 output: html_document
 ---

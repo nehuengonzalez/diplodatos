@@ -16,36 +16,36 @@ data$Maximo <- as.numeric(gsub(",", ".", data$Maximo))
 #Filtramos solo 3 grupos de activos: DLR052019, RFX20062019 y ORO052019
 data$Posicion <- gsub(" ", "", data$Posicion)
 data$Posicion
-dolarFiltro <- subset(data, (gsub(" ", "", data$Posicion) == "DLR052019") | (gsub(" ", "", data$Posicion) == "RFX20062019") | (gsub(" ", "", data$Posicion) == "ORO052019"))
+activos <- subset(data, (gsub(" ", "", data$Posicion) == "DLR052019") | (gsub(" ", "", data$Posicion) == "RFX20062019") | (gsub(" ", "", data$Posicion) == "ORO052019"))
 
-plot(dolarFiltro$Volumen, dolarFiltro$Fecha, main="Posiciones Activos")
-dolarFiltro$Posicion
-dolarFiltro
+plot(activos$Volumen, activos$Fecha, main="Posiciones Activos")
+activos$Posicion
+activos
 
 #Sacamos ahora las posiciones del set de datos a procesar y las almacenamos.
-posiciones <- dolarFiltro$Posicion
-dataSinPosicion <- dolarFiltro[-2]
+posiciones <- activos$Posicion
+dataSinPosicion <- activos[-2]
 
 #Normalizamos los valores de la columna Ultimo
 library(Hmisc)
-dolarFiltro2 <- dolarFiltro[5:8]
-dolarFiltro2
-dolarFiltro2 <- impute(dolarFiltro2)
-dolarFiltroNormalizado <- as.data.frame(lapply(dolarFiltro2, scale))
+OHLC <- activos[5:8]
+OHLC
+OHLC <- impute(OHLC)
+dataNorm <- as.data.frame(lapply(OHLC, scale))
 #dolarFiltroNormalizado <- dolarFiltro2
-plot(dolarFiltroNormalizado$Volumen, dolarFiltroNormalizado$Volumen, main="Todas las posiciones")
-dolarFiltro2
-dolarFiltroNormalizado
+plot(dataNorm$Ultimo, dataNorm$Fecha, main="Todas las posiciones")
+activos
+dataNorm
 
 #Tomamos 1000 valores aleatorios del dataset para usar como train data
-limiteInf = length(dolarFiltroNormalizado[,1])/4
-limiteSup = length(dolarFiltroNormalizado[,1])
+limiteInf = round(length(dataNorm[,1])/4)
+limiteSup = length(dataNorm[,1])
 
-data_train <- dolarFiltroNormalizado[1:limiteInf,]
-data_test <- dolarFiltroNormalizado[(limiteInf + 1):limiteSup,]
+data_train <- dataNorm[1:limiteInf,]
+data_test <- dataNorm[(limiteInf + 1):limiteSup,]
 
-data_train_labels <- dolarFiltro$Posicion[1:limiteInf]
-data_test_labels <- dolarFiltro$Posicion[(limiteInf+1):limiteSup]
+data_train_labels <- activos$Posicion[1:limiteInf]
+data_test_labels <- activos$Posicion[(limiteInf+1):limiteSup]
 data_train_labels
 
 library(class)
@@ -57,39 +57,40 @@ CrossTable(x=data_test_labels, y=data_test_pred, prop.chisq = FALSE)
 #Filtramos solo 3 grupos de activos: DLR052019, DLR082019 y DLR122019
 data$Posicion <- gsub(" ", "", data$Posicion)
 data$Posicion
-dolarFiltro <- subset(data, (gsub(" ", "", data$Posicion) == "DLR052019") | (gsub(" ", "", data$Posicion) == "DLR082019") | (gsub(" ", "", data$Posicion) == "DLR122019"))
+dolares <- subset(data, (gsub(" ", "", data$Posicion) == "DLR052019") | (gsub(" ", "", data$Posicion) == "DLR082019") | (gsub(" ", "", data$Posicion) == "DLR122019"))
 
-plot(dolarFiltro$Volumen, dolarFiltro$Fecha, main="Posiciones Activos")
-dolarFiltro$Posicion
-dolarFiltro
+plot(dolares$Volumen, dolares$Fecha, main="Posiciones Activos")
+dolares$Posicion
+dolares
 
 #Sacamos ahora las posiciones del set de datos a procesar y las almacenamos.
-posiciones <- dolarFiltro$Posicion
-dataSinPosicion <- dolarFiltro[-2]
+posiciones <- dolares$Posicion
+dataSinPosicion <- dolares[-2]
 
 #Normalizamos los valores de la columna Ultimo
 library(Hmisc)
-dolarFiltro2 <- dolarFiltro[5:8]
-dolarFiltro2 <- impute(dolarFiltro2)
-dolarFiltroNormalizado <- as.data.frame(lapply(dolarFiltro2, scale))
-plot(dolarFiltroNormalizado$Primero, dolarFiltroNormalizado$Ultimo, main="Todas las posiciones")
-dolarFiltro2
-dolarFiltroNormalizado
+OHLC <- dolares[5:8]
+OHLC <- impute(OHLC)
+dataNor <- as.data.frame(lapply(OHLC, scale))
+plot(dataNor$Primero, dataNor$Ultimo, main="Todas las posiciones")
+OHLC$Ultimo
+OHLC
 
 #Tomamos 1000 valores aleatorios del dataset para usar como train data
-limiteInf = length(dolarFiltroNormalizado[,1])/5
-limiteSup = length(dolarFiltroNormalizado[,1])
+limiteInf = length(dataNor[,1])/5
+limiteSup = length(dataNor[,1])
 
-data_train <- dolarFiltroNormalizado[1:limiteInf,]
-data_test <- dolarFiltroNormalizado[(limiteInf + 1):limiteSup,]
+data_train <- dataNor[1:limiteInf,]
+data_test <- dataNor[(limiteInf + 1):limiteSup,]
 
-data_train_labels <- dolarFiltro$Posicion[1:limiteInf]
-data_test_labels <- dolarFiltro$Posicion[(limiteInf+1):limiteSup]
+data_train_labels <- dolares$Posicion[1:limiteInf]
+data_test_labels <- dolares$Posicion[(limiteInf+1):limiteSup]
 data_train_labels
 
 library(class)
-data_test_pred <- knn(train=data_train, test=data_test, cl=data_train_labels, k=35)
+data_test_pred <- knn(train=data_train, test=data_test, cl=data_train_labels, k=5)
 
 library(gmodels)
 CrossTable(x=data_test_labels, y=data_test_pred, prop.chisq = FALSE)
+
 
