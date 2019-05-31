@@ -8,4 +8,4 @@ WORKDIR $HOME
 
 
 
-COPY workspace/*  work/
+COPY workspace  work
