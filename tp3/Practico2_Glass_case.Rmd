@@ -37,7 +37,7 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ```{r echo=TRUE}
 ### Cargamos el data set en un data frame
-glass_df = read.csv("glass.csv", header = FALSE)
+glass_df = read.csv("input_files/glass.csv", header = FALSE)
 
 ### Le ponemos los nombres a las columnas de acuerdo a la documentación del data set
 colnames(glass_df) <- 

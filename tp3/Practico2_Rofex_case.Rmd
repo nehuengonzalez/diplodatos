@@ -2,7 +2,9 @@
 title: "dolarFuturoRFX20Oro"
 author: "Grupo Diplo"
 date: "5/30/2019"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -11,10 +13,10 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Practico 2 - Clasificaci\'on de D\'olar, \'indice RFX20 y Oro.
 
-Tomamos datos de D\'olar futuro tomado de ROFEX. Tomamos como separador el tab \t
+Tomamos datos de D\'olar futuro de ROFEX. Tomamos como separador el tab \t
 
 ```{r}
-data <- read.csv('activos.xls', sep='\t')
+data <- read.csv('input_files/activos.xls', sep='\t')
 ```
 
 ## Including Plots
