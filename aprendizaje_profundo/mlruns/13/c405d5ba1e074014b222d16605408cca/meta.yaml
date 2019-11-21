@@ -1,0 +1,15 @@
+artifact_uri: file:///home/madoery/diplodatos/aprendizaje_profundo/mlruns/13/c405d5ba1e074014b222d16605408cca/artifacts
+end_time: 1574357102260
+entry_point_name: ''
+experiment_id: '13'
+lifecycle_stage: active
+name: ''
+run_id: c405d5ba1e074014b222d16605408cca
+run_uuid: c405d5ba1e074014b222d16605408cca
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1574357094205
+status: 3
+tags: []
+user_id: madoery

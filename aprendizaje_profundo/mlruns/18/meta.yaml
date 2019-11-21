@@ -1,0 +1,4 @@
+artifact_location: file:///home/madoery/diplodatos/aprendizaje_profundo/mlruns/18
+experiment_id: '18'
+lifecycle_stage: active
+name: final_exp

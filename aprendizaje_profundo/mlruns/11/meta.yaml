@@ -1,0 +1,4 @@
+artifact_location: file:///home/madoery/diplodatos/aprendizaje_profundo/mlruns/11
+experiment_id: '11'
+lifecycle_stage: active
+name: _Gender_Color1_Health

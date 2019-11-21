@@ -1,4 +1,4 @@
-artifact_location: file:///home/nehuen/datos/DIPLODATOS/AprendizajeProfundo/mlruns/1
+artifact_location: file:///home/madoery/diplodatos/aprendizaje_profundo/mlruns/1
 experiment_id: '1'
 lifecycle_stage: active
-name: experiment1
+name: exp1
