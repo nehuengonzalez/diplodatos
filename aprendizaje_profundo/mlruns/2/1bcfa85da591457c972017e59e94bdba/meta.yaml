@@ -1,0 +1,15 @@
+artifact_uri: file:///home/nehuen/datos/DIPLODATOS/AprendizajeProfundo/mlruns/2/1bcfa85da591457c972017e59e94bdba/artifacts
+end_time: 1574341442446
+entry_point_name: ''
+experiment_id: '2'
+lifecycle_stage: active
+name: ''
+run_id: 1bcfa85da591457c972017e59e94bdba
+run_uuid: 1bcfa85da591457c972017e59e94bdba
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1574341435668
+status: 3
+tags: []
+user_id: nehuen
