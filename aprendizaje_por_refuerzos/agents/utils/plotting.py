@@ -61,7 +61,7 @@ def draw_value_matrix(q):
             q_value_matrix[row, column] = maximum_value
 
     # el valor del estado objetivo se asigna en -1 (reward recibido al llegar) para que se coloree de forma apropiada
-    q_value_matrix[3, 11] = -1
+    q_value_matrix[3, 11] = 0
 
     # se grafica la matriz de valor
     plt.imshow(q_value_matrix, cmap=plt.cm.RdYlGn)
@@ -87,7 +87,7 @@ def draw_value_matrix(q):
         if best_action < up_action:
             arrow_direction = 'U'
             best_action = up_action
-        if best_action == -1:
+        if best_action==0:
             arrow_direction = ''
 
         # notar que column, row están invertidos en orden en la línea de abajo porque representan a x,y del plot
