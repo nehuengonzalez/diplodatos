@@ -1,10 +1,2 @@
 .ipynb_checkpoints
 .Rproj.user
-aprendizaje_por_refuerzos/agents/__pycache__/
-aprendizaje_por_refuerzos/agents/utils/__pycache__/
-aprendizaje_por_refuerzos/agents/utils/memory/__pycache__/
-aprendizaje_por_refuerzos/agents/utils/memory/__pycache__/__init__.cpython-36.pyc aprendizaje_por_refuerzos/agents/utils/memory/__pycache__/ReplayMemory.cpython-36.pyc aprendizaje_por_refuerzos/agents/utils/memory/__pycache__/Transition.cpython-36.pyc
-aprendizaje_por_refuerzos/agents/utils/__pycache__/__init__.cpython-36.pyc aprendizaje_por_refuerzos/agents/utils/__pycache__/plotting.cpython-36.pyc
-aprendizaje_por_refuerzos/agents/__pycache__/__init__.cpython-36.pyc
-aprendizaje_por_refuerzos/agents/__pycache__/__init__.cpython-36.pyc
-aprendizaje_por_refuerzos/agents/__pycache__
